@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title%} Beranda - Tilapia Fresh{% endblock %}
+
+{% block content %}
+    <!-- About Section -->
+    <section id="about" class="about section">
+
+      <div class="content">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+              <img src="{{ url_for('static', filename='assets/img/nila1.jpg') }}" alt="Image" class="img-fluid img-overlap" data-aos="zoom-out">
+            </div>
+            <div class="col-lg-5 ml-auto" data-aos="fade-up" data-aos-delay="100">
+              <h2 class="content-title mb-4">
+                TILAPIA FRESH
+              </h2>
+              <p class="opacity-50" style="text-align: justify;">
+                Tilapia Fresh adalah sebuah platform berbasis web yang dirancang untuk
+                membantu mengklasifikasikan tingkat kesegaran ikan nila menggunakan citra mata, kulit,
+                dan insang. Dengan memanfaatkan teknologi pengolahan citra digital dan machine learning, sistem ini mampu mengenali
+                ciri-ciri visual ikan nila dan menentukan tingkat kesegarannya secara akurat.
+
+                Platform ini bertujuan untuk mendukung para pelaku usaha perikanan, pedagang,
+                maupun konsumen dalam memastikan kualitas ikan nila.
+              </p>
+
+              <div class="row my-5">
+                <p><a href="{{ url_for('classification') }}" class="btn-cta">Mulai</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- /About Section -->
+
+{% endblock %}

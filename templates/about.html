@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title%} Beranda - Tilapia Fresh{% endblock %}
+
+{% block content %}
+
+<main class="main">
+
+  <!-- Page Title -->
+  <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/page-title-bg.webp);">
+    <div class="container position-relative">
+      <h1>Informasi Penelitian</h1>
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href="{{ url_for('main')}}">Beranda</a></li>
+          <li class="current">Informasi Penelitian</li>
+        </ol>
+      </nav>
+    </div>
+  </div><!-- End Page Title -->
+
+  <div class="container">
+    <div class="row">
+
+      <div class="col-lg-8">
+
+        <!-- Blog Details Section -->
+        <section id="blog-details" class="blog-details section">
+          <div class="container">
+
+            <article class="article">
+
+              <div class="post-img text-center">
+                <img src="{{ url_for('static', filename='assets/img/nila.jpg') }}" alt="" class="img-fluid" style="max-width: 500px;">
+              </div>              
+
+              <h2 class="title">Implementasi Convolutional Neural Network (CNN) untuk Deteksi Tingkat Kesegaran Ikan Nila Berdasarkan Citra Digital</h2>
+
+              <div class="meta-top">
+                <ul>
+                  <li class="d-flex align-items-center"><i class="bi bi-person"></i>Sarah Syakira Rambe</li>
+                </ul>
+              </div><!-- End meta top -->
+
+              <div class="content" style="text-align: justify;">
+                <p>
+                  Website <strong>Tilapia Fresh</strong> dikembangkan dalam rangka mendukung proses penilaian kualitas ikan yang lebih objektif, cepat, dan efisien. Khususnya dalam industri perikanan, pasar tradisional, maupun distribusi produk perikanan. 
+                  Penentuan tingkat kesegaran ikan secara manual seringkali bergantung pada persepsi visual manusia yang subjektif, serta membutuhkan pengalaman khusus. Oleh karena itu, sistem ini dibuat untuk mengatasi permasalahan tersebut.
+                </p>
+
+                <p style="text-align: justify;">
+                  Website ini dibangun berdasarkan penelitian berjudul <strong>Implementasi Metode Convolutional Neural Network (CNN) untuk Deteksi Tingkat Kesegaran Ikan Berdasarkan Citra Digital</strong>.
+                </p>
+
+                <p style="text-align: justify;">
+                  Tujuan dari pengembangan sistem ini adalah untuk menghadirkan solusi berbasis teknologi dalam klasifikasi tingkat kesegaran ikan nila. Sistem ini dikembangkan dengan menggunakan model Convolutional Neural Network (CNN) yang mampu mengenali dan membedakan tingkat kesegaran ikan berdasarkan citra tiga bagian tubuh utama, yaitu mata, kulit, dan insang.
+                  Model ini kemudian diterapkan ke dalam sebuah platform berbasis web yang responsif dan mudah diakses melalui perangkat desktop maupun smartphone, sehingga pengguna dari berbagai kalangan dapat memanfaatkan sistem ini dengan lebih fleksibel.
+                  Melalui aplikasi ini, pengguna cukup mengunggah atau mengambil gambar bagian tubuh ikan untuk mendapatkan hasil klasifikasi secara otomatis dan akurat, tanpa perlu keahlian khusus.
+                </p>
+
+                <p style="text-align: justify;">
+                  Dengan adanya sistem ini, diharapkan proses pengawasan mutu ikan dapat dilakukan secara cepat, konsisten, dan akurat, sekaligus meningkatkan kepercayaan konsumen terhadap kualitas produk perikanan yang dikonsumsi.
+                </p>
+              </div><!-- End post content -->
+
+            </article>
+
+          </div>
+        </section><!-- /Blog Details Section -->
+
+      </div>
+
+      <div class="col-lg-4 sidebar">
+
+        <div class="widgets-container">
+
+          <!-- Blog Author Widget -->
+          <div class="blog-author-widget widget-item">
+
+            <div class="d-flex flex-column align-items-center">
+              <div class="d-flex align-items-center w-100">
+                <img src="{{ url_for('static', filename='assets/img/sarah.jpg') }}" class="rounded-circle flex-shrink-0" alt="">
+                <div>
+                  <h4>Sarah Syakira Rambe</h4>
+                  <div class="social-links">
+                    <a href="https://www.linkedin.com/in/sarah-syakira-rambe-117b81222?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"><i class="biu bi-linkedin"></i></a>
+                  </div>
+                </div>
+              </div>
+
+              <p style="text-align: justify; font-size: 14px;">
+                Seorang mahasiswi semester 8 dari jurusan Teknik Informatika Fakultas Sains dan Teknologi, Universitas Muhammadiyah Sukabumi.
+              </p>
+
+            </div>
+
+          </div><!--/Blog Author Widget -->
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+{% endblock %}

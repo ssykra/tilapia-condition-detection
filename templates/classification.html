@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block title%} Klasifikasi - Tilapia Fresh {% endblock %}
+
+{% block content %}
+<main class="main">
+
+  <!-- Page Title -->
+  <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/page-title-bg.webp);">
+    <div class="container position-relative">
+      <h1>Klasifikasi</h1>
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href="{{ url_for('main') }}">Beranda</a></li>
+          <li class="current">Klasifikasi</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Upload Image Section -->
+  <section class="upload-form section">
+    <div class="container">
+      <div class="row justify-content-center align-items-stretch">
+
+        <!-- Upload dari File -->
+        <div class="col-md-6 d-flex align-items-stretch">
+          <div class="upload-card shadow w-100">
+            <div class="card-body text-center">
+              <h4 class="mb-3">Unggah Gambar Ikan Nila</h4>
+              <p class="mb-4">Silakan unggah gambar untuk klasifikasi kesegaran ikan.</p>
+
+              <form id="upload-form" method="POST" action="{{ url_for('classification') }}"
+                enctype="multipart/form-data">
+                <div class="upload-drop-area">
+                  <p><strong>Drag & drop untuk mengunggah</strong> atau
+                    <label for="file-upload" class="browse-label" style="cursor: pointer;">browse</label>
+                  </p>
+                  <input type="file" id="file-upload" name="image" accept="image/*" style="display: none;"
+                    onchange="previewImage(event)">
+                  <i class="bi bi-cloud-upload upload-icon"></i>
+                </div>
+
+                <div id="preview-container" style="display: none; margin-top: 20px;">
+                  <img id="preview-image" src="#" alt="Preview Gambar" class="img-fluid rounded shadow"
+                    style="max-height: 300px;">
+                  <br>
+                  <button type="submit" class="btn btn-accent mt-3" onclick="confirmSubmission(event)">
+                    Klasifikasikan Sekarang
+                  </button>
+                </div>
+              </form>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Kamera HP/Webcam -->
+        <div class="col-md-6 d-flex align-items-stretch mt-5 mt-md-0">
+          <div class="upload-card shadow w-100">
+            <div class="card-body text-center">
+              <h4 class="mb-3">Atau Ambil Gambar dengan Kamera</h4>
+
+              <video id="video" autoplay playsinline class="img-fluid mb-3"
+                style="max-height: 300px; border-radius: 12px;"></video>
+              <canvas id="canvas" style="display: none;"></canvas>
+
+              <div class="d-flex justify-content-center gap-3 mb-3">
+                <button class="btn btn-light rounded-circle shadow" onclick="switchCamera()" title="Switch Kamera">
+                  <i class="fas fa-camera-rotate fa-lg"></i>
+                </button>
+                <button class="capture-button shadow" onclick="captureImage()" title="Ambil Gambar"></button>
+                <button class="btn btn-light rounded-circle shadow" onclick="toggleCamera()" title="Toggle Kamera">
+                  <i id="camera-icon" class="fas fa-video-slash fa-lg text-danger"></i>
+                </button>
+              </div>
+
+              <form id="capture-form" method="POST" action="{{ url_for('capture_from_mobile') }}">
+                <input type="hidden" name="image_data" id="image_data">
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Hasil Klasifikasi -->
+  <!-- Hasil Klasifikasi dan Chart -->
+  <section class="upload-form section">
+    <div class="container">
+      <div class="row justify-content-center align-items-start">
+        {% if result %}
+        <!-- Kolom Hasil Klasifikasi -->
+        <div class="col-md-6 mb-4">
+          <div class="card result-card shadow">
+            <div class="card-body text-center">
+              <h4 class="mb-3">Hasil Klasifikasi</h4>
+              <img src="{{ url_for('static', filename='uploads/' + result['filename']) }}" alt="Gambar Diupload"
+                class="img-fluid mb-3" style="max-height: 300px;">
+
+              <p><strong>Label:</strong> {{ result['predicted_label'] }}</p>
+
+              {% if result.get('prob_segar') is not none and result.get('prob_tidak_segar') is not none %}
+              <p><strong>Probabilitas Segar:</strong> {{ '%.2f' % result['prob_segar'] }}</p>
+              <p><strong>Probabilitas Tidak Segar:</strong> {{ '%.2f' % result['prob_tidak_segar'] }}</p>
+              {% else %}
+              <p><strong>Probabilitas:</strong> Tidak dapat dihitung karena gambar bukan ikan nila.</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Kolom Chart -->
+        {% if result.get('prob_segar') is not none and result.get('prob_tidak_segar') is not none %}
+        <div class="col-md-6 mb-4">
+          <div class="card shadow">
+            <div class="card-body">
+              <h5 class="card-title text-center mb-3">Visualisasi Probabilitas</h5>
+              <canvas id="probabilityChart" width="400" height="300"></canvas>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% elif error %}
+        <div class="col-md-6 mb-4">
+          <div class="alert alert-danger">
+            <strong>Error:</strong> {{ error }}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% if result and result.get('prob_segar') is not none and result.get('prob_tidak_segar') is not none %}
+<script>
+  const ctx = document.getElementById('probabilityChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Segar', 'Tidak Segar'],
+      datasets: [{
+        label: 'Probabilitas',
+        data: [{{ '%.2f' % result['prob_segar'] }}, {{ '%.2f' % result['prob_tidak_segar'] }}],
+        backgroundColor: ['#578E7E', '#F5ECD5']
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 1
+        }
+      }
+    }
+  });
+</script>
+{% endif %}
+
+
+<!-- Script Kamera & Preview Upload -->
+<script>
+  let useFrontCamera = true;
+  let video = document.getElementById('video');
+  let canvas = document.getElementById('canvas');
+  let stream;
+  let cameraActive = false;
+
+  async function startCamera() {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+
+    const constraints = {
+      video: {
+        facingMode: useFrontCamera ? 'user' : 'environment'
+      }
+    };
+
+    try {
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
+      video.srcObject = stream;
+      cameraActive = true;
+      document.getElementById("camera-icon").classList.replace("fa-video", "fa-video-slash");
+      document.getElementById("camera-icon").classList.add("text-danger");
+    } catch (err) {
+      alert("Gagal mengakses kamera: " + err);
+    }
+  }
+
+  function switchCamera() {
+    useFrontCamera = !useFrontCamera;
+    startCamera();
+  }
+
+  function toggleCamera() {
+    if (cameraActive) {
+      stopCamera();
+    } else {
+      startCamera();
+    }
+  }
+
+  function stopCamera() {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+    video.srcObject = null;
+    cameraActive = false;
+    document.getElementById("camera-icon").classList.replace("fa-video-slash", "fa-video");
+    document.getElementById("camera-icon").classList.remove("text-danger");
+  }
+
+  function captureImage() {
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = canvas.toDataURL('image/jpeg');
+    document.getElementById('image_data').value = imageData;
+    document.getElementById('capture-form').submit();
+  }
+
+  function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById("preview-image").src = e.target.result;
+        document.getElementById("preview-container").style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function confirmSubmission(event) {
+    event.preventDefault();
+
+    Swal.fire({
+      title: 'Apakah Anda yakin ingin mengklasifikasikan gambar ini?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya',
+      cancelButtonText: 'Batal',
+      customClass: {
+        confirmButton: 'btn btn-outline-accent',
+        cancelButton: 'btn btn-outline-secondary'
+      },
+      buttonsStyling: false,
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById("upload-form").submit();
+      }
+    });
+
+    return false;
+  }
+  window.addEventListener('load', startCamera);
+</script>
+
+{% if not result and not error %}
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    Swal.fire({
+      icon: 'info',
+      title: 'Petunjuk Pengunggahan Gambar',
+      html: 'Pastikan gambar yang Anda unggah adalah <b>ikan nila</b> dengan <b>posisi jelas</b> dan <b>latar belakang bersih</b> untuk hasil klasifikasi yang akurat.',
+      confirmButtonText: 'Saya Mengerti'
+    });
+  });
+</script>
+{% endif %}
+
+{% endblock %}
