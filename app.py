@@ -66,7 +66,7 @@ def classify_image(img_array, filename, img_path):
 
 @app.route('/')
 def main():
-    return render_template("index.html")
+    return render_template("beranda.html")
 
 @app.route('/about')
 def about():
